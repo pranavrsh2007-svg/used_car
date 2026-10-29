@@ -1,0 +1,6 @@
+{
+  "name": "AutoWorth AI",
+  "description": "Indicative used-car valuation and resale pricing discovery engine engineered for the Indian automotive market with INR pricing corridors.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

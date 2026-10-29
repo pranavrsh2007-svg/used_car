@@ -1,0 +1,164 @@
+{
+  "best_model_name": "XGBoost Regressor",
+  "selected_metric": "Validation MAE (\u20b9)",
+  "features": {
+    "categorical": [
+      "brand",
+      "model",
+      "fuel",
+      "transmission",
+      "owner",
+      "seller_type"
+    ],
+    "numerical": [
+      "car_age",
+      "km_driven",
+      "engine_cc",
+      "max_power_bhp",
+      "mileage_kmpl",
+      "seats"
+    ],
+    "target": "selling_price"
+  },
+  "dataset": {
+    "source": "Kaggle CarDekho v3 Dataset",
+    "train_samples": 4844,
+    "val_samples": 1038,
+    "reference_year": 2025
+  },
+  "best_model_val_metrics": {
+    "mae_inr": 79437.17,
+    "rmse_inr": 246366.72,
+    "r2_score": 0.8344,
+    "mape_percent": 17.89,
+    "mdape_percent": 12.5
+  },
+  "all_models_compared": [
+    {
+      "model_name": "Dummy Regressor (Baseline)",
+      "train_metrics": {
+        "mae_inr": 272498.98,
+        "rmse_inr": 492599.64,
+        "r2_score": -0.0457,
+        "mape_percent": 80.94,
+        "mdape_percent": 42.66
+      },
+      "val_metrics": {
+        "mae_inr": 293052.0,
+        "rmse_inr": 616285.61,
+        "r2_score": -0.0361,
+        "mape_percent": 87.79,
+        "mdape_percent": 43.33
+      },
+      "val_mae": 293052.0,
+      "val_r2": -0.0361,
+      "val_rmse": 616285.61,
+      "val_mape": 87.79
+    },
+    {
+      "model_name": "Ridge Linear Regression",
+      "train_metrics": {
+        "mae_inr": 109922.84,
+        "rmse_inr": 208983.37,
+        "r2_score": 0.8118,
+        "mape_percent": 28.87,
+        "mdape_percent": 17.91
+      },
+      "val_metrics": {
+        "mae_inr": 120940.87,
+        "rmse_inr": 316798.96,
+        "r2_score": 0.7262,
+        "mape_percent": 30.25,
+        "mdape_percent": 18.92
+      },
+      "val_mae": 120940.87,
+      "val_r2": 0.7262,
+      "val_rmse": 316798.96,
+      "val_mape": 30.25
+    },
+    {
+      "model_name": "Random Forest Regressor",
+      "train_metrics": {
+        "mae_inr": 44566.11,
+        "rmse_inr": 88287.66,
+        "r2_score": 0.9664,
+        "mape_percent": 10.33,
+        "mdape_percent": 7.06
+      },
+      "val_metrics": {
+        "mae_inr": 83862.55,
+        "rmse_inr": 249751.28,
+        "r2_score": 0.8298,
+        "mape_percent": 17.85,
+        "mdape_percent": 11.87
+      },
+      "val_mae": 83862.55,
+      "val_r2": 0.8298,
+      "val_rmse": 249751.28,
+      "val_mape": 17.85
+    },
+    {
+      "model_name": "XGBoost Regressor",
+      "train_metrics": {
+        "mae_inr": 52547.86,
+        "rmse_inr": 72803.3,
+        "r2_score": 0.9772,
+        "mape_percent": 14.55,
+        "mdape_percent": 9.86
+      },
+      "val_metrics": {
+        "mae_inr": 79437.17,
+        "rmse_inr": 246366.72,
+        "r2_score": 0.8344,
+        "mape_percent": 17.89,
+        "mdape_percent": 12.5
+      },
+      "val_mae": 79437.17,
+      "val_r2": 0.8344,
+      "val_rmse": 246366.72,
+      "val_mape": 17.89
+    },
+    {
+      "model_name": "LightGBM Regressor",
+      "train_metrics": {
+        "mae_inr": 66198.74,
+        "rmse_inr": 114913.67,
+        "r2_score": 0.9431,
+        "mape_percent": 16.39,
+        "mdape_percent": 11.41
+      },
+      "val_metrics": {
+        "mae_inr": 84285.19,
+        "rmse_inr": 251331.61,
+        "r2_score": 0.8277,
+        "mape_percent": 18.69,
+        "mdape_percent": 12.15
+      },
+      "val_mae": 84285.19,
+      "val_r2": 0.8277,
+      "val_rmse": 251331.61,
+      "val_mape": 18.69
+    },
+    {
+      "model_name": "CatBoost Regressor",
+      "train_metrics": {
+        "mae_inr": 70318.17,
+        "rmse_inr": 101813.82,
+        "r2_score": 0.9553,
+        "mape_percent": 18.51,
+        "mdape_percent": 12.68
+      },
+      "val_metrics": {
+        "mae_inr": 83811.1,
+        "rmse_inr": 232793.21,
+        "r2_score": 0.8522,
+        "mape_percent": 19.71,
+        "mdape_percent": 13.76
+      },
+      "val_mae": 83811.1,
+      "val_r2": 0.8522,
+      "val_rmse": 232793.21,
+      "val_mape": 19.71
+    }
+  ]
+}

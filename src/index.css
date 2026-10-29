@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root, html.dark {
+    --bg-base: #101412;
+    --surface-base: #101412;
+    --surface-card: #1B211E;
+    --surface-card-elevated: #202622;
+    --surface-card-lowest: #0D100F;
+    --text-primary: #F5F5F0;
+    --text-body: #E0E3DE;
+    --text-muted: #B4B9AA;
+    --text-subtle: #7F8576;
+    --border-subtle: #28322C;
+    --border-highlight: #333F38;
+    --color-accent-lime: #D7F36A;
+    --color-on-accent-lime: #161D00;
+    --color-accent-teal: #43C8B0;
+    --color-accent-negative: #FF8F85;
+  }
+
+  html.light {
+    --bg-base: #F7F7F2;
+    --surface-base: #FFFFFF;
+    --surface-card: #FFFFFF;
+    --surface-card-elevated: #F0F2EB;
+    --surface-card-lowest: #E6EAE0;
+    --text-primary: #151B18;
+    --text-body: #242D28;
+    --text-muted: #525E57;
+    --text-subtle: #727F78;
+    --border-subtle: #D8DDD4;
+    --border-highlight: #C2C9BD;
+    --color-accent-lime: #4B6100;
+    --color-on-accent-lime: #FFFFFF;
+    --color-accent-teal: #007060;
+    --color-accent-negative: #BA1A1A;
+  }
+
+  html, body {
+    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--bg-base);
+    color: var(--text-body);
+    min-height: 100vh;
+    overflow-x: hidden;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  h1, h2, h3, h4, .font-headline {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  .font-mono-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Subtle scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-base);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent-lime);
+}
+
+/* Print styles */
+@media print {
+  body {
+    background-color: #FFFFFF !important;
+    color: #111111 !important;
+    font-size: 11pt;
+  }
+  header, footer, nav, .no-print, button:not(.print-include) {
+    display: none !important;
+  }
+  main {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  .print-card {
+    border: 1px solid #DDDDDD !important;
+    box-shadow: none !important;
+    background: #FFFFFF !important;
+    color: #111111 !important;
+    page-break-inside: avoid;
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "test_sample_count": 1039,
+  "overall_test_metrics": {
+    "mae_inr": 82276.81,
+    "rmse_inr": 177890.98,
+    "r2_score": 0.9101,
+    "mape_percent": 17.12,
+    "mdape_percent": 12.1
+  },
+  "price_bracket_breakdown": {
+    "Budget (< 4 Lakhs)": {
+      "sample_count": 516,
+      "mae_inr": 42292.75,
+      "mdape_percent": 13.53
+    },
+    "Mid-Market (4 - 10 Lakhs)": {
+      "sample_count": 442,
+      "mae_inr": 77761.55,
+      "mdape_percent": 10.41
+    },
+    "Executive (10 - 25 Lakhs)": {
+      "sample_count": 58,
+      "mae_inr": 180957.97,
+      "mdape_percent": 11.65
+    },
+    "Luxury (>= 25 Lakhs)": {
+      "sample_count": 23,
+      "mae_inr": 817233.91,
+      "mdape_percent": 23.85
+    }
+  }
+}

@@ -1,0 +1,27 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+.claude/
+
+# Python & ML
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+ml/venv/
+venv/
+.venv/
+ml/data/raw/*.csv
+ml/data/raw/*.zip
+ml/data/processed/*.csv
+ml/data/processed/*.parquet
+ml/models/*.pkl
+ml/reports/*.png
+catboost_info/
+

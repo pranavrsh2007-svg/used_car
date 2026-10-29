@@ -1,0 +1,7 @@
+Algorithm,Val_R2,Val_MAE_INR,Val_RMSE_INR,Val_MAPE_Percent,Val_MdAPE_Percent
+XGBoost Regressor,0.8344,79437.17,246366.72,17.89,12.5
+CatBoost Regressor,0.8522,83811.1,232793.21,19.71,13.76
+Random Forest Regressor,0.8298,83862.55,249751.28,17.85,11.87
+LightGBM Regressor,0.8277,84285.19,251331.61,18.69,12.15
+Ridge Linear Regression,0.7262,120940.87,316798.96,30.25,18.92
+Dummy Regressor (Baseline),-0.0361,293052.0,616285.61,87.79,43.33
