@@ -8,7 +8,9 @@ import { METRO_CLUSTERS, INDIAN_VEHICLE_CATALOG } from './valuationEngine';
 const API_BASE_URL = (
   (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_API_BASE_URL) ||
   (typeof process !== 'undefined' && process.env?.VITE_API_BASE_URL) ||
-  'http://localhost:8000'
+  ((typeof import.meta !== 'undefined' && (import.meta as any).env?.PROD)
+    ? 'https://autoworth-api.onrender.com'
+    : 'http://localhost:8000')
 ).replace(/\/+$/, '');
 
 export interface MlApiHealth {
