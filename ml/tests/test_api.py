@@ -104,7 +104,8 @@ def test_predict_endpoint_missing_required_fields():
 
 
 def test_cors_preflight():
-    response = client.options(
+    # 1. Localhost origin
+    resp_local = client.options(
         "/predict",
         headers={
             "Origin": "http://localhost:3000",
@@ -112,8 +113,49 @@ def test_cors_preflight():
             "Access-Control-Request-Headers": "content-type",
         },
     )
-    assert response.status_code == 200
-    assert response.headers.get("access-control-allow-origin") == "http://localhost:3000"
+    assert resp_local.status_code == 200
+    assert resp_local.headers.get("access-control-allow-origin") == "http://localhost:3000"
+
+    # 2. Production Vercel origin
+    resp_vercel = client.options(
+        "/predict",
+        headers={
+            "Origin": "https://used-car-seven.vercel.app",
+            "Access-Control-Request-Method": "POST",
+            "Access-Control-Request-Headers": "content-type",
+        },
+    )
+    assert resp_vercel.status_code == 200
+    assert resp_vercel.headers.get("access-control-allow-origin") == "https://used-car-seven.vercel.app"
+
+    # 3. Vercel preview branch deployment
+    resp_preview = client.options(
+        "/predict",
+        headers={
+            "Origin": "https://used-car-pranavrsh2007-preview.vercel.app",
+            "Access-Control-Request-Method": "POST",
+            "Access-Control-Request-Headers": "content-type",
+        },
+    )
+    assert resp_preview.status_code == 200
+    assert resp_preview.headers.get("access-control-allow-origin") == "https://used-car-pranavrsh2007-preview.vercel.app"
+
+    # 4. Actual POST request returns access-control-allow-origin
+    post_resp = client.post(
+        "/predict",
+        json={
+            "make": "Hyundai",
+            "model": "Creta",
+            "year": 2021,
+            "kilometers": 38000,
+            "fuelType": "Diesel",
+            "transmission": "Automatic",
+            "ownership": "1st Owner",
+        },
+        headers={"Origin": "https://used-car-seven.vercel.app"},
+    )
+    assert post_resp.status_code == 200
+    assert post_resp.headers.get("access-control-allow-origin") == "https://used-car-seven.vercel.app"
 
 
 def test_predict_endpoint_negative_or_extreme_year():

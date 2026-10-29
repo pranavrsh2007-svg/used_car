@@ -5,13 +5,44 @@
 import { VehicleSpec, ValuationResult, ValuationVector } from '../types/valuation';
 import { METRO_CLUSTERS, INDIAN_VEHICLE_CATALOG } from './valuationEngine';
 
-const API_BASE_URL = (
-  (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_API_BASE_URL) ||
-  (typeof process !== 'undefined' && process.env?.VITE_API_BASE_URL) ||
-  ((typeof import.meta !== 'undefined' && (import.meta as any).env?.PROD)
-    ? 'https://autoworth-api.onrender.com'
-    : 'http://localhost:8000')
-).replace(/\/+$/, '');
+function getApiBaseUrl(): string {
+  // 1. Explicit environment variable
+  const envUrl = (
+    (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_API_BASE_URL) ||
+    (typeof process !== 'undefined' && process.env?.VITE_API_BASE_URL)
+  );
+
+  // Check if running in deployed browser environment (e.g. Vercel)
+  const isBrowser = typeof window !== 'undefined' && typeof window.location !== 'undefined';
+  const isLocalHost = isBrowser && (
+    window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1' ||
+    window.location.hostname === '0.0.0.0'
+  );
+  const isDeployedWeb = isBrowser && !isLocalHost;
+
+  // On deployed web domains (e.g., used-car-seven.vercel.app), never call localhost
+  if (isDeployedWeb) {
+    if (envUrl && !envUrl.includes('localhost') && !envUrl.includes('127.0.0.1')) {
+      return envUrl.replace(/\/+$/, '');
+    }
+    return 'https://autoworth-api.onrender.com';
+  }
+
+  // Vite production bundle fallback
+  const isViteProd = typeof import.meta !== 'undefined' && (import.meta as any).env?.PROD;
+  if (isViteProd) {
+    if (envUrl && !envUrl.includes('localhost') && !envUrl.includes('127.0.0.1')) {
+      return envUrl.replace(/\/+$/, '');
+    }
+    return 'https://autoworth-api.onrender.com';
+  }
+
+  // Local development default
+  return (envUrl || 'http://127.0.0.1:8000').replace(/\/+$/, '');
+}
+
+export const API_BASE_URL = getApiBaseUrl();
 
 export interface MlApiHealth {
   status: string;
@@ -35,7 +66,7 @@ export interface MlPredictionRawResponse {
 /**
  * Check if the Python FastAPI backend is reachable and its model is loaded.
  */
-export async function checkBackendHealth(timeoutMs = 3500): Promise<MlApiHealth | null> {
+export async function checkBackendHealth(timeoutMs = 6000): Promise<MlApiHealth | null> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
 
@@ -89,7 +120,7 @@ export async function predictWithMlApi(spec: VehicleSpec): Promise<ValuationResu
   };
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 12000);
+  const timeoutId = setTimeout(() => controller.abort(), 15000);
 
   let response: Response;
   try {
@@ -106,24 +137,51 @@ export async function predictWithMlApi(spec: VehicleSpec): Promise<ValuationResu
   } catch (err: any) {
     clearTimeout(timeoutId);
     if (err.name === 'AbortError') {
-      throw new Error('Prediction request timed out. Please check if the ML backend is active.');
+      throw new Error(
+        `Prediction request timed out after 15s. The backend server at ${API_BASE_URL} may still be waking up from sleep (Render free tier). Please retry shortly.`
+      );
     }
-    throw new Error(`Unable to reach the prediction server at ${API_BASE_URL}. Ensure the backend service is running.`);
+    
+    // Distinguish CORS / network connectivity failure from HTTP errors
+    const isNetworkOrCors = err instanceof TypeError || 
+      err.message?.includes('Failed to fetch') || 
+      err.message?.includes('NetworkError') ||
+      err.message?.includes('Load failed');
+
+    if (isNetworkOrCors) {
+      throw new Error(
+        `Network or CORS connection failure to ${API_BASE_URL}. If the backend is waking up, this typically resolves in a few moments. Please verify that ${API_BASE_URL}/health is responding.`
+      );
+    }
+    
+    throw new Error(`Connection error: ${err.message || 'Failed to reach prediction backend.'}`);
   }
 
   if (!response.ok) {
-    let errorDetail = 'Inference request failed.';
+    let errorDetail = `Server returned HTTP ${response.status}`;
     try {
       const errJson = await response.json();
       if (errJson.details && Array.isArray(errJson.details)) {
-        errorDetail = errJson.details.join(', ');
+        errorDetail = `Validation Error: ${errJson.details.join(', ')}`;
       } else if (errJson.detail) {
-        errorDetail = String(errJson.detail);
+        errorDetail = `API Error: ${errJson.detail}`;
       } else if (errJson.message) {
-        errorDetail = String(errJson.message);
+        errorDetail = `API Error: ${errJson.message}`;
       }
     } catch {
-      errorDetail = `Server responded with status HTTP ${response.status}.`;
+      if (response.status === 400) {
+        errorDetail = 'Bad Request (HTTP 400): The server rejected the request parameters or preflight headers.';
+      } else if (response.status === 404) {
+        errorDetail = `Not Found (HTTP 404): The prediction endpoint ${API_BASE_URL}/predict was not found.`;
+      } else if (response.status === 422) {
+        errorDetail = 'Unprocessable Entity (HTTP 422): One or more vehicle specifications are out of valid range.';
+      } else if (response.status === 502 || response.status === 503) {
+        errorDetail = `Service Unavailable (HTTP ${response.status}): The backend service is temporarily offline or deploying.`;
+      } else if (response.status >= 500) {
+        errorDetail = `Internal Server Error (HTTP ${response.status}): The inference pipeline encountered an unexpected error.`;
+      } else {
+        errorDetail = `HTTP Error ${response.status}: ${response.statusText || 'Inference request failed'}`;
+      }
     }
     throw new Error(errorDetail);
   }

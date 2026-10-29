@@ -111,16 +111,32 @@ app = FastAPI(
 # CORS Configuration
 # ============================================================================
 
-raw_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:5173,http://127.0.0.1:3000,http://127.0.0.1:5173")
-allowed_origins = [origin.strip() for origin in raw_origins.split(",") if origin.strip()]
+DEFAULT_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:5173",
+    "https://used-car-seven.vercel.app",
+    "https://autoworth-ai.vercel.app",
+]
+
+raw_origins = os.getenv("ALLOWED_ORIGINS", "")
+custom_origins = [origin.strip().rstrip("/") for origin in raw_origins.split(",") if origin.strip()]
+
+# Merge defaults and environment-specified origins, deduplicating while preserving order
+allowed_origins = list(dict.fromkeys(DEFAULT_ALLOWED_ORIGINS + custom_origins))
+
+# Regex matching local development ports as well as all Vercel deployment domains
+ORIGIN_REGEX = r"^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$|^https://([a-zA-Z0-9-_]+\.)*vercel\.app$"
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins if allowed_origins else ["*"],
-    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$",
+    allow_origins=allowed_origins,
+    allow_origin_regex=ORIGIN_REGEX,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 
